@@ -19,8 +19,8 @@ func (s session) isExpired() bool {
 	return s.expiry.Before(time.Now())
 }
 
-//validSession returns username and true if the session is valid
-func validSession(r *http.Request) (string, bool) {
+//ValidSession returns username and true if the session is valid
+func ValidSession(r *http.Request) (string, bool) {
 	c, err := r.Cookie("session_token")
 	if err == nil {
 		if val, ok := sessions.Load(c.Value); ok {
@@ -33,13 +33,13 @@ func validSession(r *http.Request) (string, bool) {
 func NewSessionToken(w http.ResponseWriter, username string) {
 	sessionToken := uuid.NewV4()
 	deleteSameUser(username)
-	expiresAt := time.Now().Add(2 * time.Hour) //let's add Refresh
+	expiresAt := time.Now().Add(2 * time.Hour)
 	sessions.Store(sessionToken.String(), session{username, expiresAt})
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_token",
 		Value:    sessionToken.String(),
-		Path:     "/",  //?
-		HttpOnly: true, //?
+		Path:     "/",
+		HttpOnly: true,
 		Expires:  expiresAt,
 	})
 }
