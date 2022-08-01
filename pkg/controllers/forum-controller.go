@@ -20,7 +20,9 @@ const TimeFormat string = time.RFC1123
 type appData struct {
 	User           models.User
 	Posts          []models.Post
+	Post           models.Post //replace
 	Tags           []string
+	Tag            string
 	TotalPosts     int
 	Path           string
 	WarningMessage string
@@ -221,7 +223,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) *appError {
 		http.Redirect(w, r, "/accounts/login?next=/create/post", http.StatusFound)
 		return nil
 	}
-	data := &appData{}
+	data := &appData{SessionOpen: isSessionOpen}
 	switch r.Method {
 	case http.MethodGet:
 		utils.Render(w, "create-page.html", data)
@@ -241,13 +243,11 @@ func CreatePost(w http.ResponseWriter, r *http.Request) *appError {
 		if utf8.RuneCountInString(post.Title) > 100 || utf8.RuneCountInString(post.Text) > 10000 {
 			return &appError{Code: http.StatusBadRequest}
 		}
-		if len(post.Tags) > 10 {
+		if len(post.Tags) > 50 {
 			return &appError{Code: http.StatusBadRequest}
 		}
 		for _, tag := range post.Tags {
-			//always error
-			//fix it: tag=="" -> true
-			if strings.Contains(tag, " ") || utf8.RuneCountInString(tag) > 16 { //|| tag == ""
+			if strings.Contains(tag, " ") || utf8.RuneCountInString(tag) > 30 || tag == "" {
 				return &appError{Code: http.StatusBadRequest}
 			}
 		}
@@ -258,7 +258,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) *appError {
 		}
 		post.UserID = user.ID
 		post.Username = username
-		post.Tags = post.Tags[:len(post.Tags)-1] //
 		if err = models.CreatePost(post); err != nil {
 			return &appError{Code: 500}
 		}
@@ -314,7 +313,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) *appError {
 func VotePost(w http.ResponseWriter, r *http.Request) *appError {
 	username, isSessionOpen := ValidSession(r)
 	if !isSessionOpen {
-		http.Redirect(w, r, "/accounts/login/?next=/vote/post", http.StatusFound)
+		http.Redirect(w, r, "/accounts/login/?next=/vote/post", http.StatusFound) //get vote/post?...
 		return nil
 	}
 	if r.Method != http.MethodPost {
@@ -396,6 +395,7 @@ func GetPosts(w http.ResponseWriter, r *http.Request) *appError { //FILTER FUNC
 	_, isSessionOpen := ValidSession(r)
 	var data = &appData{SessionOpen: isSessionOpen}
 	tag := r.FormValue("tag")
+	tag = strings.TrimPrefix(tag, "#")
 	if tag != "" {
 		posts, err := models.GetPostsByTag(tag)
 		if err == sql.ErrNoRows { //
@@ -413,6 +413,12 @@ func GetPosts(w http.ResponseWriter, r *http.Request) *appError { //FILTER FUNC
 		data.Posts = *posts
 		data.TotalPosts = len(*posts)
 	}
+	data.Tag = tag
+	allTags, err := models.GetAllTags()
+	if err != nil {
+		return &appError{Code: 500}
+	}
+	data.Tags = allTags
 	utils.Render(w, "home-page.html", data)
 	return nil
 }
@@ -434,10 +440,12 @@ func GetPostByID(w http.ResponseWriter, r *http.Request) *appError {
 	if err != nil {
 		return &appError{Code: 404}
 	}
-	_, isSessionOpen := ValidSession(r)
+	username, isSessionOpen := ValidSession(r)
 	data := &appData{
 		SessionOpen: isSessionOpen,
-		Posts:       []models.Post{*post},
+		User:        models.User{Username: username},
+		// Posts:       []models.Post{*post}, //replace with this
+		Post: *post,
 	}
 	utils.Render(w, "post-page.html", data)
 	return nil
