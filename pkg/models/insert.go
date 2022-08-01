@@ -35,16 +35,19 @@ func CreateTags(postID int64, tags []string) error { //✅✅✅
 	VALUES (?, ?);`
 
 	for _, tag := range tags {
-		res, err := db.Exec(stmt1, tag)
-		if err != nil {
-			return err
+		var tagID int64
+		if res, err := db.Exec(stmt1, tag); err != nil {
+			tagID, err = getTagID(tag)
+			if err != nil {
+				return err
+			}
+		} else {
+			tagID, err = res.LastInsertId()
+			if err != nil {
+				return err
+			}
 		}
-		tagID, err := res.LastInsertId()
-		if err != nil {
-			return err
-		}
-		_, err = db.Exec(stmt2, postID, tagID)
-		if err != nil {
+		if _, err := db.Exec(stmt2, postID, tagID); err != nil {
 			return err
 		}
 	}

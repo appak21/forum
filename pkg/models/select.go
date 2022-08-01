@@ -156,8 +156,7 @@ func GetPostsByTag(tag string) (*[]Post, error) { //???
 	return &posts, nil
 }
 
-//////////////////////////////////////////////////
-func getTagID(tag string) (int64, error) { //???
+func getTagID(tag string) (int64, error) {
 	var tagID int64
 	stmt := `SELECT "id" FROM "main"."tags" WHERE "tag" = ?`
 	row := db.QueryRow(stmt, tag)
@@ -258,10 +257,3 @@ func getCommentVotes(cmtID int64) (*Vote, error) {
 	}
 	return &votes, nil
 }
-
-//	CHECK ALL SQL STATEMENTS FOR CORRECTNESS AS YOU CHANGED SOME TABLES
-
-// CHECK DISMATCHES
-//func (m *ForumModel) GetVotePosts(login string, vote int) (*[]models.Post, error) {
-//func GetVotedPostsByUserID(userID int64, vote int) (*[]Post, error) {
-//----------
