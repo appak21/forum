@@ -1,18 +1,32 @@
 {{template "base" .}}
 {{define "title"}}Home{{end}}
+{{define "navbar"}}
+<form class="navbar-nav me-auto mb-2 mb-lg-0" action="/posts/filter" method="GET">
+  <div class="d-flex">
+    <input list="search_bar_list" value="{{.Tag}}" type="search" class="form-control rounded" name="tag" placeholder="#tag_name" aria-label="Search" aria-describedby="search-addon" />
+    <datalist id="search_bar_list"> 
+        <!-- <option value="#leetcode"></option> -->
+        {{range .Tags}}
+            <option value="#{{.}}"></option>
+        {{end}}
+    </datalist>
+    <button type="submit" class="btn"><img width="30px" height="30px" src="/img/search.png" alt=""></button>
+  </div>
+</form>
+{{end}}
 {{define "content"}}
-<div class="container" style="width: 70%;">
+<div class="container main" style="width: 70%;">
   <!--  -->
   {{if eq .TotalPosts 0}}
   <h3 class="text-muted">No Posts Yet. <a href="/create/post" class="text-reset">Create One</a>.</h3>
   {{end}}
   <!--  -->
   {{range .Posts}}
-  <div class="d-flex position-relative bg-light">
+  <div class="d-flex position-relative bg-light post">
     <img src="/img/1.jpg" style="max-width:200px;width:100%;max-height:250px;height:100%;" class="flex-shrink-0 me-3" alt="...">
-    <div>
+    <div class="post-text">
       <h5 class="mt-0">{{.Title}}</h5>
-      <p><i>{{.Username}} | {{.CreatedAt}}</i></p>
+      <p><i>{{.Username}} | {{.When}}</i></p>
       <p>{{printf "%.250s" .Text}}...</p>
       <a href="/posts?id={{.ID}}" class="stretched-link link-info"><i>Read more</i></a>
     </div>

@@ -29,6 +29,7 @@ type Post struct {
 	Username  string `json:"username"`
 	UserID    int64  `json:"userId"`
 	CreatedAt string `json:"createdAt"`
+	When      string
 	Tags      []string
 	Comments  []Comment
 	Votes     Vote
@@ -55,8 +56,3 @@ type Like struct {
 	PostID int64 `json:"post_id,omitempty"`
 	IsLike bool  `json:"is_like,omitempty"`
 }
-
-// type Validation struct {
-// 	IsValidUP bool //valid username and password
-// 	IsUniqUE  bool //unique username and email
-// }

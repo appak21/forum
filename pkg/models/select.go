@@ -72,7 +72,8 @@ func GetPostsCreatedByUser(userID int64) (*[]Post, error) {
 	stmt := `
 	SELECT posts.id, posts.username, posts.title, posts.text, posts.created_at
 	FROM posts
-	WHERE posts.user_id = ?`
+	WHERE posts.user_id = ?
+	ORDER BY "created_at" DESC`
 	rows, err := db.Query(stmt, userID)
 	if err != nil {
 		return nil, err
@@ -100,7 +101,8 @@ func GetPostsVotedByUser(userID int64, vote int) (*[]Post, error) { //✅✅✅
 	FROM posts
 	INNER JOIN post_votes
 	ON posts.id=post_votes.post_id
-	WHERE post_votes.vote = ? AND post_votes.user_id = ?`
+	WHERE post_votes.vote = ? AND post_votes.user_id = ?
+	ORDER BY "created_at" DESC` //----------------------------------------------////////////////////////
 
 	rows, err := db.Query(stmt, vote, userID)
 	if err != nil {

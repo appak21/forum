@@ -1,5 +1,7 @@
 {{template "base" .}}
 {{define "title"}}Create Post{{end}}
+{{define "navbar"}}
+{{end}}
 {{define "content"}}
   <form autocomplete="off" class="container" action="/create/post" method="POST">
 
@@ -15,9 +17,9 @@
         <div class="form-text">Maximum of 10000 characters</div>
     </div>
 
-    <div class="wrapper bg-light">
+    <div class="wrapper wrapper-tag">
       <h6>Type your hashtag & separate them with a space.</h6>
-      <p class="form-text">Maximum of 30 characters and no more than 50 tags</p>
+      <p class="form-text info">Maximum of 30 characters and no more than 50 tags</p>
       <input type="text" id="hashtags" autocomplete="off">
       <textarea type="text" name="tags" class="d-none" id="get-tags" required></textarea>
       <div class="tag-container">
@@ -25,7 +27,7 @@
     </div>
 
     <div class="btn-create-class">
-      <button type="submit" class="btn btn-primary" id="btn-create">Post it!</button>
+      <button type="submit" class="btn btn-success" id="btn-create"><b>Post it!</b></button>
     </div>
 </form>
 <script src="/js/hashtag.js"></script>

@@ -1,6 +1,13 @@
 .main {
-    margin-top: 70px;
-    margin-bottom: 55px;
+    margin: 50px auto;
+}
+
+.post {
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.post-text {
+    padding-top: 10px;
 }
 
 h3 {
@@ -23,7 +30,7 @@ h3 {
 
 .auth-form {
     max-width: 300px;
-    margin: 0 auto;
+    margin: 30px auto;
 }
 
 #text-input {
@@ -47,13 +54,27 @@ h3 {
     padding: 20px 28px;
     margin: auto;
     width: 580px;
-    /* background-color: #314b94; */
+    /* background-color: #273c75; */
     /* #273c75 */
     border-radius: 30px;
     display: flex;
     align-items: center;
     flex-flow: row wrap;
-    border: solid 2px white;
+    /* border: solid 2px rgb(0, 0, 0); */
+  }
+
+  .wrapper-tag {
+    background-color: #273c75;
+    color: rgb(255, 255, 255);
+  }
+
+  .wrapper-tag .info {
+    color: rgb(227, 212, 212);
+  }
+
+  .profile {
+    margin: auto;
+    width: 80%;
   }
 
   .tag-container {
@@ -81,3 +102,213 @@ h3 {
     background-color: #111;
     cursor: pointer;
   }
+
+  /* --------------------- */
+    
+    .profile-widget {
+      position: relative;
+    }
+    .profile-widget .image-container {
+      background-size: cover;
+      background-position: center;
+      padding: 190px 0 10px;
+    }
+    .profile-widget .image-container .profile-background {
+      width: 100%;
+      height: auto;
+    }
+    .profile-widget .image-container .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto -60px;
+      display: block;
+    }
+    .profile-widget .details {
+      padding: 50px 15px 15px;
+      text-align: center;
+    }
+    /* End Component: Profile Widget */
+    /********************************************************************
+    *********************************************************************
+    *********************************************************************/
+    /* Component: Mini Profile Widget */
+    .mini-profile-widget .image-container .avatar {
+      width: 180px;
+      height: 180px;
+      display: block;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: white;
+      padding: 4px;
+      border: 1px solid #dddddd;
+    }
+    .mini-profile-widget .details {
+      text-align: center;
+    }
+    
+    /* Component: Panel */
+    .panel {
+      border-radius: 0;
+      margin-bottom: 30px;
+    }
+    .panel.solid-color {
+      color: white;
+    }
+    .panel .panel-heading {
+      border-radius: 0;
+      position: relative;
+    }
+    .panel .panel-heading > .controls {
+      position: absolute;
+      right: 10px;
+      top: 12px;
+    }
+    .panel .panel-heading > .controls .nav.nav-pills {
+      margin: -8px 0 0 0;
+    }
+    .panel .panel-heading > .controls .nav.nav-pills li a {
+      padding: 5px 8px;
+    }
+    .panel .panel-heading .clickable {
+      margin-top: 0px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .panel .panel-heading.no-heading-border {
+      border-bottom-color: transparent;
+    }
+    .panel .panel-heading .left {
+      float: left;
+    }
+    .panel .panel-heading .right {
+      float: right;
+    }
+    .panel .panel-title {
+      font-size: 16px;
+      line-height: 20px;
+    }
+    .panel .panel-title.panel-title-sm {
+      font-size: 18px;
+      line-height: 28px;
+    }
+    .panel .panel-title.panel-title-lg {
+      font-size: 24px;
+      line-height: 34px;
+    }
+    .panel .panel-body {
+      font-size: 13px;
+    }
+    .panel .panel-body > .body-section {
+      margin: 0px 0px 20px;
+    }
+    .panel .panel-body > .body-section > .section-heading {
+      margin: 0px 0px 5px;
+      font-weight: bold;
+    }
+    .panel .panel-body > .body-section > .section-content {
+      margin: 0px 0px 10px;
+    }
+    .panel-white {
+      border: 1px solid #dddddd;
+    }
+    .panel-white > .panel-heading {
+      color: #333;
+      background-color: #fff;
+      border-color: #ddd;
+    }
+    .panel-white > .panel-footer {
+      background-color: #fff;
+      border-color: #ddd;
+    }
+
+    
+    /* Component: Posts */
+    .post .post-heading {
+      height: 85px;
+      padding: 18px 15px;
+    }
+    .post .post-heading .avatar {
+      width: 55px;
+      height: 55px;
+      display: block;
+      margin-right: 15px;
+    }
+    .post .post-heading .meta .title {
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+    .post .post-heading .meta .title a {
+      color: black;
+    }
+    .post .post-heading .meta .title a:hover {
+      color: #aaaaaa;
+    }
+    .post .post-heading .meta .time {
+      margin-top: 8px;
+      color: #999;
+    }
+    .post .post-image .image {
+      width: 100%;
+      height: auto;
+    }
+    .post .post-description {
+      padding: 15px;
+    }
+    .post .post-description p {
+      font-size: 15px;
+    }
+    .post .stats {
+      margin-top: 20px;
+    }
+    .post .stats .stat-item {
+      display: inline-block;
+      margin-right: 15px;
+    }
+    .post .stats .stat-item .icon {
+      margin-right: 8px;
+    }
+    .post .post-footer {
+      border-top: 1px solid #ddd;
+      padding: 15px;
+    }
+    .post .post-footer .input-group-addon a {
+      color: #454545;
+    }
+    .post .post-footer .comments-list {
+      padding: 0;
+      margin-top: 20px;
+      list-style-type: none;
+    }
+    .post .post-footer .comments-list .comment {
+      display: block;
+      width: 100%;
+      margin: 20px 0;
+    }
+    .post .post-footer .comments-list .comment .avatar {
+      width: 35px;
+      height: 35px;
+    }
+    .post .post-footer .comments-list .comment .comment-heading {
+      display: block;
+      width: 100%;
+    }
+    .post .post-footer .comments-list .comment .comment-heading .user {
+      font-size: 14px;
+      font-weight: bold;
+      display: inline;
+      margin-top: 0;
+      margin-right: 10px;
+    }
+    .post .post-footer .comments-list .comment .comment-heading .time {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 0;
+      display: inline;
+    }
+    .post .post-footer .comments-list .comment .comment-body {
+      margin-left: 50px;
+    }
+    .post .post-footer .comments-list .comment > .comments-list {
+      margin-left: 50px;
+    }
