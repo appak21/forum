@@ -15,12 +15,12 @@ import (
 	"github.com/appak21/forum/pkg/utils"
 )
 
-const TimeFormat string = time.RFC1123
+const TimeFormat string = "2006-01-02 15:04:05"
 
 type appData struct {
 	User           models.User
 	Posts          []models.Post
-	Post           models.Post //replace
+	Post           models.Post
 	Tags           []string
 	Tag            string
 	TotalPosts     int
@@ -63,6 +63,10 @@ func Home(w http.ResponseWriter, r *http.Request) *appError {
 	if err != nil {
 		return &appError{Code: http.StatusInternalServerError}
 	}
+	for i := 0; i < len(*posts); i++ {
+		(*posts)[i].When = utils.When((*posts)[i].CreatedAt)
+	}
+
 	tags, err := models.GetAllTags()
 	if err != nil {
 		return &appError{Code: http.StatusInternalServerError}
@@ -440,12 +444,12 @@ func GetPostByID(w http.ResponseWriter, r *http.Request) *appError {
 	if err != nil {
 		return &appError{Code: 404}
 	}
+	post.When = utils.When(post.CreatedAt)
 	username, isSessionOpen := ValidSession(r)
 	data := &appData{
 		SessionOpen: isSessionOpen,
 		User:        models.User{Username: username},
-		// Posts:       []models.Post{*post}, //replace with this
-		Post: *post,
+		Post:        *post,
 	}
 	utils.Render(w, "post-page.html", data)
 	return nil
@@ -472,6 +476,9 @@ func GetPostsCreated(w http.ResponseWriter, r *http.Request) *appError {
 	posts, err := models.GetPostsCreatedByUser(user.ID)
 	if err != nil {
 		return &appError{Code: http.StatusInternalServerError}
+	}
+	for i := 0; i < len(*posts); i++ {
+		(*posts)[i].When = utils.When((*posts)[i].CreatedAt)
 	}
 	tags, err := models.GetAllTags()
 	if err != nil {
@@ -501,6 +508,9 @@ func GetPostsLiked(w http.ResponseWriter, r *http.Request) *appError {
 	posts, err := models.GetPostsVotedByUser(user.ID, 1)
 	if err != nil {
 		return &appError{Code: 500}
+	}
+	for i := 0; i < len(*posts); i++ {
+		(*posts)[i].When = utils.When((*posts)[i].CreatedAt)
 	}
 	tags, err := models.GetAllTags()
 	if err != nil {
