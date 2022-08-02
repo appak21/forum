@@ -1,147 +1,104 @@
 {{template "base" .}}
 {{define "title"}}Post page{{end}}
+{{define "navbar"}}
+{{end}}
 {{define "content"}}
-<!-- POST -->
-<div class="conatiner mb80">
-  <div class="vtimeline-block">
-      <div class="vtimeline-content">
-          <img src="/img/1.jpg" alt="" class="img-fluid mb20">
-          <a href="/posts?id={{ .Post.ID }}">
-              <h3>{{ .Post.Title }}</h3>
-          </a>
-          <ul class="post-meta list-inline">
-              <li class="list-inline-item">
-                  <i class="fa fa-user-circle-o"></i> <a href="/profile?username={{.Post.Username}}">{{
-                      .Post.Username
-                      }}</a>
-              </li>
-              <li class="list-inline-item">
-                  {{ .Post.CreatedAt }}
-              </li>
-          </ul>
-          <div class="col1">
-              <p>
-                  {{ .Post.Text }}
-              </p>
-          </div>
-          <br>
-          <li class="list-inline-item">
-              Tags: {{ range .Post.Tags}}
-              <a href="/posts/filter?tag={{ . }}">{{ . }}</a> {{ end }}
-          </li>
-          <hr>
-          <li class="list-inline-item">
-              <div class="d-flex">
-                  <form action="/vote/post?id={{ .Post.ID }}&vote=1" method="POST">
-                      <label><button class="text-success btn btn-color" data-bs-toggle="tooltip"
-                              data-bs-placement="bottom" title="like"><svg xmlns="http://www.w3.org/2000/svg"
-                                  width="20" height="20" fill="currentColor" class="bi bi-emoji-smile"
-                                  viewBox="0 0 16 16">
-                                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                  <path
-                                      d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" />
-                              </svg></button>-
-                          {{ .Post.Votes.Likes }}</label>
-                  </form>
-                  <form class="mx-1" action="/vote/post?id={{ .Post.ID }}&vote=-1" method="POST">
-                      <label><button class="text-danger btn btn-color" data-bs-toggle="tooltip"
-                              data-bs-placement="bottom" title="dislike"><svg xmlns="http://www.w3.org/2000/svg"
-                                  width="20" height="20" fill="currentColor" class="bi bi-emoji-frown"
-                                  viewBox="0 0 16 16">
-                                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                  <path
-                                      d="M4.285 12.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 10.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 9.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" />
-                              </svg></button>-
-                          {{ .Post.Votes.Dislikes }}</label>
-                  </form>
-              </div>
-          </li>
-          <br>
-      </div>
-  </div>
-</div>
-<br>
-<hr>
-
-<!-- Comments -->
-
-
-<div class="col-md-7 w-100">
-  <div class="card">
-      <div class="p-3">
-          <h6>Comments</h6>
-      </div>
-
-      <form action="/create/comment?id={{.Post.ID}}" method="POST">
-          <div class="mt-3 d-flex flex-row align-items-center p-3 form-color"> <img src="/img/user.png" width="50" class="rounded-circle mr-2"> <input type="text" name="text" class="form-control" maxlength="200" placeholder="Enter your comment... (Maximum 200 characters)" required> </div>
-          <div class="d-flex">
-              <button class="mx">Comment</button>
-          </div>
-
-      </form>
-
-      {{ if .Post.Comments }} {{ range .Post.Comments }}
-      <div class="mt-2">
-          <hr>
-          <div class="d-flex flex-row p-3"> <img src="/img/1.jpg" width="40" height="40" class="rounded-circle mr-3">
-              <div class="w-90">
-                  <div class="d-flex justify-content-between align-items-center">
-                      <div class="d-flex flex-row align-items-center"> <span class="mr-2"><a
-                                  href="profile?username={{ .Username }}" target="_blank" class="text-dark">{{ .Username
-                                  }}</a></span>
-                      </div> <small>{{ printf "%.10s" .CreatedAt }}</small>
-                  </div>
-                  <p class="text-justify mb-0">{{ .Text }}</p>
-              </div>
-          </div>
-      </div>
-      <div class="d-flex">
-          <form action="/vote/comment?id={{ .ID }}&vote=1" method="POST" class="mx-2">
-              <label><button class="text-success btn btn-color" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                      title="like"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                          class="bi bi-emoji-smile" viewBox="0 0 16 16">
-                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                          <path
-                              d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" />
-                      </svg></button>-
-                  {{ .Votes.Likes }}</label>
-          </form>
-          <form class="mx-1" action="/vote/comment?id={{ .ID }}&vote=-1" method="POST" class="mx-2">
-              <label><button class="text-danger btn btn-color" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                      title="dislike"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                          fill="currentColor" class="bi bi-emoji-frown" viewBox="0 0 16 16">
-                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                          <path
-                              d="M4.285 12.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 10.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 9.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" />
-                      </svg></i></button>-
-                  {{ .Votes.Dislikes }}</label>
-          </form>
-      </div>
-      {{ end }} {{ else }}
-      <hr>
-      <h5 class="text-center">There are no comments yet</h5>
-      <br> {{ end }} <br>
-      <br>
-  </div>
-</div>
-
-
-<!-- <div class="container main">
-  <div class="row">
-    <div class="col-3">
-      <div style="width: 80%; height: 80%;">
-        <img src="/img/1.jpg" class="card-img-top" alt="post photo">
-      </div>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8 main">
+            <div class="panel panel-white post">
+                <div class="post-heading">
+                    <div class="pull-left image">
+                        <img src="/img/user.png" class="img-circle avatar" alt="user profile image">
+                    </div>
+                    <div class="pull-left meta">
+                        <div class="title h6">
+                            <a href="/profile?username={{.Post.Username}}"><b>{{.Post.Username}}</b></a>
+                            made a post.
+                        </div>
+                        <h6 class="text-muted time">{{.Post.When}}</h6>
+                    </div>
+                </div>
+                <div class="post-image">
+                    <img src=""><img src="/img/1.jpg" class="image" alt="image post">
+                </div>
+                <div class="post-description">
+                    <h4>{{.Post.Title}}</h4>
+                    <p>{{.Post.Text}}</p>
+                    <div class="stats">
+                        <a href="javascript:void(0);" class="btn btn-default stat-item">
+                            <i class="fa fa-thumbs-up icon"></i>{{.Post.Votes.Likes}}
+                        </a>
+                        <a href="javascript:void(0);" class="btn btn-default stat-item">
+                            <i class="fa fa-thumbs-down icon"></i>{{.Post.Votes.Dislikes}}
+                        </a>
+                    </div>
+                </div>
+                <div class="post-footer">
+                    <div class="input-group"> 
+                        <input class="form-control" placeholder="Add a comment" type="text">
+                        <span class="input-group-addon">
+                            <a href="javascript:void(0);"><i class="fa fa-edit"></i></a>  
+                        </span>
+                    </div>
+                    <ul class="comments-list">
+                        <li class="comment">
+                            <a class="pull-left" href="javascript:void(0);">
+                                <img class="avatar" src="/img/user.png" alt="avatar">
+                            </a>
+                            <div class="comment-body">
+                                <div class="comment-heading">
+                                    <h4 class="user">John dOE</h4>
+                                    <h5 class="time">7 minutes ago</h5>
+                                </div>
+                                <p>I really love this picture.I really love this picture. I really love this picture. I really love this picture. I really wish i could have been there.</p>
+                                <div class="stats">
+                                    <a href="javascript:void(0);" class="btn btn-default stat-item">
+                                        <i class="fa fa-thumbs-up icon"></i>{{.Post.Votes.Likes}}
+                                    </a>
+                                    <a href="javascript:void(0);" class="btn btn-default stat-item">
+                                        <i class="fa fa-thumbs-down icon"></i>{{.Post.Votes.Dislikes}}
+                                    </a>
+                                </div>            
+                            </div>
+                        </li>
+                        <li class="comment">
+                            <a class="pull-left" href="javascript:void(0);">
+                                <img class="avatar" src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+                            </a>
+                            <div class="comment-body">
+                                <div class="comment-heading">
+                                    <h4 class="user">John Doe</h4>
+                                    <h5 class="time">3 minutes ago</h5>
+                                </div>
+                                <p>I think I might you this for one of my projects.</p>
+                                <div class="stats">
+                                    <a href="javascript:void(0);" class="btn btn-default stat-item">
+                                        <i class="fa fa-thumbs-up icon"></i>{{.Post.Votes.Likes}}
+                                    </a>
+                                    <a href="javascript:void(0);" class="btn btn-default stat-item">
+                                        <i class="fa fa-thumbs-down icon"></i>{{.Post.Votes.Dislikes}}
+                                    </a>
+                                </div>            
+                            </div>
+                        </li>
+                        <li class="comment">
+                            <a class="pull-left" href="javascript:void(0);">
+                                <img class="avatar" src="https://bootdey.com/img/Content/avatar/avatar4.png" alt="avatar">
+                            </a>
+                            <div class="comment-body">
+                                <div class="comment-heading">
+                                    <h4 class="user">John Doe</h4>
+                                    <h5 class="time">10 seconds ago</h5>
+                                </div>
+                                <p>Wow! This is gorgeous.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>        
     </div>
-    <div class="col-sm-6">
-        <div class="conatiner">
-            <h5 class="mt-0">{{.Title}}</h5>
-            <p><i>{{.Author}} | {{.CreatedAt}}</i></p>
-            <p>{{.Text}}</p>      
-        </div>
-    </div>
-  </div>
-</div> -->
-
-
+</div>
 {{end}}

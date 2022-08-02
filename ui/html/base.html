@@ -24,18 +24,7 @@
               <a class="nav-link active" aria-current="page" href="/">Home</a>
             </li>
           </ul>
-          <form class="navbar-nav me-auto mb-2 mb-lg-0" action="/posts/filter" method="GET">
-            <div class="d-flex">
-              <input list="search_bar_list" value="{{.Tag}}" type="search" class="form-control rounded" name="tag" placeholder="#tag_name" aria-label="Search" aria-describedby="search-addon" />
-              <datalist id="search_bar_list"> 
-                  <!-- <option value="#leetcode"></option> -->
-                  {{range .Tags}}
-                      <option value="#{{.}}"></option>
-                  {{end}}
-              </datalist>
-              <button type="submit" class="btn"><img width="30px" height="30px" src="/img/search.png" alt=""></button>
-            </div>
-          </form>
+          {{template "navbar" .}}
           {{if eq .SessionOpen true}}
           <div class="btn-group">
               <button class="btn btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
