@@ -47,6 +47,7 @@ type Comment struct {
 	UserID    int64  `json:"userId"`
 	PostID    int64  `json:"postId"`
 	CreatedAt string `json:"createdAt"`
+	When      string
 	Votes     Vote
 }
 
