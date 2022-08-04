@@ -402,11 +402,13 @@ func GetPosts(w http.ResponseWriter, r *http.Request) *appError { //FILTER FUNC
 	_, isSessionOpen := ValidSession(r)
 	var data = &appData{SessionOpen: isSessionOpen}
 	tag := r.FormValue("tag")
+	data.Tag = tag
 	tag = strings.TrimPrefix(tag, "#")
 	if tag != "" {
 		posts, err := models.GetPostsByTag(tag)
-		if err == sql.ErrNoRows { //
-			return &appError{Code: http.StatusNotFound}
+		if err == sql.ErrNoRows {
+			utils.Render(w, "home-page.html", data)
+			return nil
 		} else if err != nil {
 			return &appError{Code: 500}
 		}
@@ -420,7 +422,6 @@ func GetPosts(w http.ResponseWriter, r *http.Request) *appError { //FILTER FUNC
 		data.Posts = *posts
 		data.TotalPosts = len(*posts)
 	}
-	data.Tag = tag
 	allTags, err := models.GetAllTags()
 	if err != nil {
 		return &appError{Code: 500}

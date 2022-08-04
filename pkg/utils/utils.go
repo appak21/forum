@@ -78,60 +78,34 @@ func fileExists(filename string) bool {
 //past time format must be based on RFC3339 or "2006-01-02 15:04:05".
 //If an error occurs, it returns past time without formatting
 func When(past string) string {
+
+	dictionary := map[int][]string{
+		0: {" year", " years"},
+		1: {" month", " months"},
+		2: {" day", " days"},
+		3: {" hour", " hours"},
+		4: {" minute", " minutes"},
+		5: {" second", " seconds"},
+	}
+
 	now := time.Now().Format(time.RFC3339)
-	pastYear, err1 := strconv.Atoi(past[0:4])
-	currYear, err2 := strconv.Atoi(now[0:4])
-	if err1 != nil || err2 != nil {
-		return past
-	}
-	if currYear-pastYear > 0 {
-		return strconv.Itoa(currYear-pastYear) + " years ago"
-	}
 
-	pastMonth, err1 := strconv.Atoi(past[5:7])
-	currMonth, err2 := strconv.Atoi(now[5:7])
-	if err1 != nil || err2 != nil {
-		return past
+	k, till := 0, 4
+	for i := 0; i < 6; i++ {
+		if i != 0 {
+			till = 2
+		}
+		pastTime, err1 := strconv.Atoi(past[k : k+till])
+		currTime, err2 := strconv.Atoi(now[k : k+till])
+		if err1 != nil || err2 != nil {
+			return past
+		}
+		if t := currTime - pastTime; t == 1 {
+			return strconv.Itoa(t) + dictionary[i][0] + " ago"
+		} else if t > 1 {
+			return strconv.Itoa(t) + dictionary[i][1] + " ago"
+		}
+		k = k + till + 1
 	}
-	if currMonth-pastMonth > 0 {
-		return strconv.Itoa(currMonth-pastMonth) + " months ago"
-	}
-
-	pastDay, err1 := strconv.Atoi(past[8:10])
-	currDay, err2 := strconv.Atoi(now[8:10])
-	if err1 != nil || err2 != nil {
-		return past
-	}
-	if currDay-pastDay > 0 {
-		return strconv.Itoa(currDay-pastDay) + " days ago"
-	}
-
-	pastHour, err1 := strconv.Atoi(past[11:13])
-	currHour, err2 := strconv.Atoi(now[11:13])
-	if err1 != nil || err2 != nil {
-		return past
-	}
-	if currHour-pastHour > 0 {
-		return strconv.Itoa(currHour-pastHour) + " hours ago"
-	}
-
-	pastMin, err1 := strconv.Atoi(past[14:16])
-	currMin, err2 := strconv.Atoi(now[14:16])
-	if err1 != nil || err2 != nil {
-		return past
-	}
-	if currMin-pastMin > 0 {
-		return strconv.Itoa(currMin-pastMin) + " minutes ago"
-	}
-
-	pastSec, err1 := strconv.Atoi(past[17:19])
-	currSec, err2 := strconv.Atoi(now[17:19])
-	if err1 != nil || err2 != nil {
-		return past
-	}
-	if currSec-pastSec > 0 {
-		return strconv.Itoa(currSec-pastSec) + " seconds ago"
-	}
-
 	return "just now"
 }
