@@ -3,7 +3,7 @@
 {{define "navbar"}}
 <form class="navbar-nav me-auto mb-2 mb-lg-0" action="/posts/filter" method="GET">
   <div class="d-flex">
-    <input list="search_bar_list" {{if .Tag}} value="#{{.Tag}}" {{end}} type="search" class="form-control rounded" name="tag" placeholder="#tag_name" aria-label="Search" aria-describedby="search-addon" />
+    <input list="search_bar_list" value="{{.Tag}}" type="search" class="form-control rounded" name="tag" placeholder="#tag_name" aria-label="Search" aria-describedby="search-addon" />
     <datalist id="search_bar_list"> 
         <!-- <option value="#leetcode"></option> -->
         {{range .Tags}}
