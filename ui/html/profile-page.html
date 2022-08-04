@@ -17,7 +17,7 @@
           <p class="font-monospace">Total created posts: <b>{{.TotalPosts}}</b></p>
           <p class="font-monospace">Reputation: <b>{{.User.Reputation}}</b></p>
           <p class="font-monospace">Joined Date: <b>{{.User.CreatedAt}}</b></p>
-          <p class="font-monospace"><a href="/posts/myposts" class="text-decoration-none link-info"><b>See posts created by me</b></a></p>
+          <p class="font-monospace"><a href="/posts/myposts?username={{.User.Username}}" class="text-decoration-none link-info"><b>See posts created by me</b></a></p>
         </div>
     </div>
   </div>

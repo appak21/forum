@@ -97,7 +97,6 @@ func Profile(w http.ResponseWriter, r *http.Request) *appError {
 	}
 	user, err := models.GetUser(username)
 	if err != nil {
-		fmt.Println("User not found", err)
 		return &appError{Code: http.StatusNotFound}
 	}
 	posts, err := models.GetPostsCreatedByUser(user.ID)
@@ -117,6 +116,10 @@ func Signin(w http.ResponseWriter, r *http.Request) *appError {
 	nextURL := r.FormValue("next")
 	if nextURL == "" {
 		nextURL = "/"
+	}
+	vote := r.FormValue("vote")
+	if vote != "" && nextURL != "/" {
+		nextURL += "&vote=" + vote
 	}
 	_, isSessionOpen := ValidSession(r)
 	if isSessionOpen {
@@ -239,7 +242,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) *appError {
 			Tags:      strings.Split(r.FormValue("tags"), " "),
 			CreatedAt: time,
 		}
-		fmt.Println("TAGS:", post.Tags)
 		//------------
 		if strings.TrimSpace(post.Title) == "" || strings.TrimSpace(post.Text) == "" {
 			return &appError{Code: http.StatusBadRequest}
@@ -282,7 +284,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) *appError {
 	}
 	username, isSessionOpen := ValidSession(r)
 	if !isSessionOpen {
-		http.Redirect(w, r, "/accounts/login/?next=/create/comment", http.StatusFound)
+		http.Redirect(w, r, "/accounts/login?next=/create/comment", http.StatusFound)
 		return nil
 	}
 	postID, err := strconv.Atoi(r.URL.Query().Get("id"))
@@ -316,14 +318,6 @@ func CreateComment(w http.ResponseWriter, r *http.Request) *appError {
 
 func VotePost(w http.ResponseWriter, r *http.Request) *appError {
 	username, isSessionOpen := ValidSession(r)
-	if !isSessionOpen {
-		http.Redirect(w, r, "/accounts/login/?next=/vote/post", http.StatusFound) //get vote/post?...
-		return nil
-	}
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		return &appError{Code: http.StatusMethodNotAllowed}
-	}
 	postID, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
 		return &appError{Code: http.StatusBadRequest}
@@ -334,6 +328,15 @@ func VotePost(w http.ResponseWriter, r *http.Request) *appError {
 	}
 	if vote != 1 && vote != -1 {
 		return &appError{Code: http.StatusBadRequest}
+	}
+	nextPath := fmt.Sprintf("/accounts/login?next=/vote/post?id=%v&vote=%v", postID, vote)
+	if !isSessionOpen {
+		http.Redirect(w, r, nextPath, http.StatusFound)
+		return nil
+	}
+	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", http.MethodGet)
+		return &appError{Code: http.StatusMethodNotAllowed}
 	}
 	user, err := models.GetUser(username)
 	if err != nil {
@@ -346,23 +349,18 @@ func VotePost(w http.ResponseWriter, r *http.Request) *appError {
 	if err = models.VotePost(user.ID, int64(postID), vote); err != nil {
 		return &appError{Code: 500}
 	}
-	next := fmt.Sprintf("/posts/%v", postID)
+	next := fmt.Sprintf("/posts?id=%v", postID)
 	http.Redirect(w, r, next, http.StatusSeeOther)
 	return nil
 }
 
 func VoteComment(w http.ResponseWriter, r *http.Request) *appError {
-	username, isSessionOpen := ValidSession(r)
-	if !isSessionOpen {
-		http.Redirect(w, r, "/accounts/login/?next=/vote/comment", http.StatusFound)
-		return nil
-	}
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
+	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", http.MethodGet)
 		return &appError{Code: http.StatusMethodNotAllowed}
 	}
-
-	cmtID, err := strconv.Atoi(r.URL.Query().Get("id"))
+	username, isSessionOpen := ValidSession(r)
+	cmtID, err := strconv.ParseInt(r.URL.Query().Get("id"), 0, 0)
 	if err != nil {
 		return &appError{Code: http.StatusBadRequest}
 	}
@@ -373,20 +371,25 @@ func VoteComment(w http.ResponseWriter, r *http.Request) *appError {
 	if vote != 1 && vote != -1 {
 		return &appError{Code: http.StatusBadRequest}
 	}
+	nextPath := fmt.Sprintf("/accounts/login?next=/vote/comment?id=%v&vote=%v", cmtID, vote)
+	if !isSessionOpen {
+		http.Redirect(w, r, nextPath, http.StatusFound)
+		return nil
+	}
 	user, err := models.GetUser(username)
 	if err != nil {
 		return &appError{Code: http.StatusBadRequest}
 	}
-	comment, err := models.GetCommentByID(int64(cmtID))
-	if err != sql.ErrNoRows {
+	comment, err := models.GetCommentByID(cmtID)
+	if err == sql.ErrNoRows {
 		return &appError{Code: http.StatusBadRequest}
 	} else if err != nil {
 		return &appError{Code: 500}
 	}
-	if err = models.VoteComment(user.ID, int64(cmtID), vote); err != nil {
+	if err = models.VoteComment(user.ID, cmtID, vote); err != nil {
 		return &appError{Code: 500}
 	}
-	next := fmt.Sprintf("/posts/%v", comment.PostID)
+	next := fmt.Sprintf("/posts?id=%v", comment.PostID)
 	http.Redirect(w, r, next, http.StatusSeeOther)
 	return nil
 }
@@ -445,6 +448,10 @@ func GetPostByID(w http.ResponseWriter, r *http.Request) *appError {
 		return &appError{Code: 404}
 	}
 	post.When = utils.When(post.CreatedAt)
+	for i := 0; i < len(post.Comments); i++ {
+		post.Comments[i].When = utils.When(post.Comments[i].CreatedAt)
+	}
+
 	username, isSessionOpen := ValidSession(r)
 	data := &appData{
 		SessionOpen: isSessionOpen,
@@ -460,12 +467,8 @@ func GetPostsCreated(w http.ResponseWriter, r *http.Request) *appError {
 		w.Header().Set("Allow", http.MethodGet)
 		return &appError{Code: http.StatusMethodNotAllowed}
 	}
-	login := r.URL.Query().Get("login")
+	login := r.URL.Query().Get("username")
 	username, isSessionOpen := ValidSession(r)
-	if login == "" && !isSessionOpen {
-		http.Redirect(w, r, "/accounts/login/?next=/posts/myposts", http.StatusSeeOther)
-		return nil
-	}
 	if login == "" {
 		login = username
 	}

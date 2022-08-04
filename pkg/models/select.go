@@ -1,6 +1,6 @@
 package models
 
-func GetUser(username string) (*User, error) { //✅✅✅
+func GetUser(username string) (*User, error) {
 	stmt := `SELECT * FROM "main"."users" WHERE "username" = ?`
 	row := db.QueryRow(stmt, username)
 	user := &User{}
@@ -26,7 +26,7 @@ func GetAllTags() ([]string, error) {
 	return tags, nil
 }
 
-func GetAllPosts() (*[]Post, error) { //✅✅✅
+func GetAllPosts() (*[]Post, error) {
 	stmt := `SELECT * FROM "main"."posts" ORDER BY "created_at" DESC`
 	rows, err := db.Query(stmt)
 	if err != nil {
@@ -44,7 +44,7 @@ func GetAllPosts() (*[]Post, error) { //✅✅✅
 	return &posts, nil
 }
 
-func GetPostById(postID int64) (*Post, error) { //✅✅✅
+func GetPostById(postID int64) (*Post, error) {
 	stmt := `SELECT * FROM "main"."posts" WHERE "id" = ?`
 	row := db.QueryRow(stmt, postID)
 	var post Post
@@ -95,14 +95,14 @@ func GetPostsCreatedByUser(userID int64) (*[]Post, error) {
 	return &posts, nil
 }
 
-func GetPostsVotedByUser(userID int64, vote int) (*[]Post, error) { //✅✅✅
+func GetPostsVotedByUser(userID int64, vote int) (*[]Post, error) {
 	stmt := `
 	SELECT posts.id, posts.username, posts.title, posts.text, posts.created_at
 	FROM posts
 	INNER JOIN post_votes
 	ON posts.id=post_votes.post_id
 	WHERE post_votes.vote = ? AND post_votes.user_id = ?
-	ORDER BY "created_at" DESC` //----------------------------------------------////////////////////////
+	ORDER BY "created_at" DESC`
 
 	rows, err := db.Query(stmt, vote, userID)
 	if err != nil {
@@ -121,7 +121,7 @@ func GetPostsVotedByUser(userID int64, vote int) (*[]Post, error) { //✅✅✅
 	return &posts, nil
 }
 
-func GetCommentByID(cmtID int64) (*Comment, error) { //✅✅✅
+func GetCommentByID(cmtID int64) (*Comment, error) {
 	stmt := `SELECT * FROM comments WHERE id = ?`
 	var cmt Comment
 	row := db.QueryRow(stmt, cmtID)
@@ -132,7 +132,7 @@ func GetCommentByID(cmtID int64) (*Comment, error) { //✅✅✅
 	return &cmt, nil
 }
 
-func GetPostsByTag(tag string) (*[]Post, error) { //???
+func GetPostsByTag(tag string) (*[]Post, error) {
 	tagID, err := getTagID(tag)
 	if err != nil {
 		return nil, err

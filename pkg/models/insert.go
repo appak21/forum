@@ -4,7 +4,7 @@ import (
 	"database/sql"
 )
 
-func CreateUser(user User) error { //✅✅✅
+func CreateUser(user User) error {
 	stmt := `INSERT INTO "main"."users"(
 		"username",
 		"email",
@@ -16,7 +16,7 @@ func CreateUser(user User) error { //✅✅✅
 	return err
 }
 
-func CreatePost(post *Post) error { //✅✅✅
+func CreatePost(post *Post) error {
 	stmt := `INSERT INTO "main"."posts"
 	("user_id", "username", "title", "text", "created_at")
 	VALUES (?, ?, ?, ?, ?);`
@@ -28,7 +28,7 @@ func CreatePost(post *Post) error { //✅✅✅
 	return err
 }
 
-func CreateTags(postID int64, tags []string) error { //✅✅✅
+func CreateTags(postID int64, tags []string) error {
 	stmt1 := `INSERT INTO "main"."tags" (Tag) VALUES (?)`
 	stmt2 := `INSERT INTO "main"."posts_and_tags"
 	("post_id", "tag_id")
@@ -54,18 +54,18 @@ func CreateTags(postID int64, tags []string) error { //✅✅✅
 	return nil
 }
 
-func CreateComment(cmt Comment) error { //✅✅✅
+func CreateComment(cmt Comment) error {
 	stmt := `INSERT INTO "main"."comments"
-	("user_id", "post_id", "username", "text", "created_at")
+	("post_id", "user_id", "username", "text", "created_at")
 	VALUES (?, ?, ?, ?, ?);`
-	_, err := db.Exec(stmt, cmt.UserID, cmt.PostID, cmt.Username, cmt.Text, cmt.CreatedAt)
+	_, err := db.Exec(stmt, cmt.PostID, cmt.UserID, cmt.Username, cmt.Text, cmt.CreatedAt)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func VotePost(userID, postID int64, vote int) error { //✅✅✅
+func VotePost(userID, postID int64, vote int) error {
 	stmtSelect := `SELECT id, vote FROM post_votes WHERE user_id = ? AND post_id = ?;`
 	stmtExec := `INSERT INTO "main"."post_votes" (
 		"user_id",
@@ -93,7 +93,7 @@ func VotePost(userID, postID int64, vote int) error { //✅✅✅
 	return nil
 }
 
-func VoteComment(userID, cmtID int64, vote int) error { //✅✅✅
+func VoteComment(userID, cmtID int64, vote int) error {
 	stmtSelect := `SELECT id, vote FROM comment_votes WHERE user_id = ? AND comment_id = ?;`
 	stmtExec := `INSERT INTO "main"."comment_votes" (
 		"user_id",
@@ -104,20 +104,19 @@ func VoteComment(userID, cmtID int64, vote int) error { //✅✅✅
 
 	var id, like int64
 	row := db.QueryRow(stmtSelect, userID, cmtID)
-	err := row.Scan(&id, &like)
-	if err != nil {
-		return err
-	}
-	if _, err = db.Exec(stmtExec, userID, cmtID, vote); err != nil {
-		return err
+	if err := row.Scan(&id, &like); err != nil {
+		if _, err := db.Exec(stmtExec, userID, cmtID, vote); err != nil {
+			return err
+		}
+		return nil
 	}
 
-	if _, err = db.Exec(stmtDelete, id); err != nil {
+	if _, err := db.Exec(stmtDelete, id); err != nil {
 		return err
 	}
 
 	if int64(vote) != like {
-		if _, err = db.Exec(stmtExec, userID, cmtID, vote); err != nil {
+		if _, err := db.Exec(stmtExec, userID, cmtID, vote); err != nil {
 			return err
 		}
 	}
