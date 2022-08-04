@@ -26,44 +26,53 @@
                 <div class="post-description">
                     <h4>{{.Post.Title}}</h4>
                     <p>{{.Post.Text}}</p>
+                    <li class="list-inline-item">
+                        {{ range .Post.Tags}}
+                        <a style="text-decoration: none;" href="/posts/filter?tag={{ . }}"><i>#{{ . }}</i></a> {{ end }}
+                    </li>
                     <div class="stats">
-                        <a href="javascript:void(0);" class="btn btn-default stat-item">
+                        <a href="/vote/post?id={{.Post.ID}}&vote=1" class="btn btn-default stat-item">
                             <i class="fa fa-thumbs-up icon"></i>{{.Post.Votes.Likes}}
                         </a>
-                        <a href="javascript:void(0);" class="btn btn-default stat-item">
+                        <a href="/vote/post?id={{.Post.ID}}&vote=-1" class="btn btn-default stat-item">
                             <i class="fa fa-thumbs-down icon"></i>{{.Post.Votes.Dislikes}}
                         </a>
                     </div>
                 </div>
                 <div class="post-footer">
-                    <div class="input-group"> 
-                        <input class="form-control" placeholder="Add a comment" type="text">
-                        <span class="input-group-addon">
-                            <a href="javascript:void(0);"><i class="fa fa-edit"></i></a>  
-                        </span>
-                    </div>
+                    <form action="/create/comment?id={{.Post.ID}}" method="POST">
+                        <div class="input-group"> 
+                            <input name="text" class="form-control" placeholder="Add a comment" type="text">
+                            <!-- <span class="input-group-addon">
+                                <a href="javascript:void(0);"><i class="fa fa-edit"></i></a>  
+                            </span> -->
+                            <button class="btn btn-success" type="submit">Post</button>
+                        </div>
+                    </form>
                     <ul class="comments-list">
+                        {{range .Post.Comments}}
                         <li class="comment">
-                            <a class="pull-left" href="javascript:void(0);">
+                            <a class="pull-left" href="/profile?username={{.Username}}">
                                 <img class="avatar" src="/img/user.png" alt="avatar">
                             </a>
                             <div class="comment-body">
                                 <div class="comment-heading">
-                                    <h4 class="user">John dOE</h4>
-                                    <h5 class="time">7 minutes ago</h5>
+                                    <h4 class="user">{{.Username}}</h4>
+                                    <h5 class="time">{{.When}}</h5>
                                 </div>
-                                <p>I really love this picture.I really love this picture. I really love this picture. I really love this picture. I really wish i could have been there.</p>
+                                <p>{{.Text}}</p>
                                 <div class="stats">
-                                    <a href="javascript:void(0);" class="btn btn-default stat-item">
-                                        <i class="fa fa-thumbs-up icon"></i>{{.Post.Votes.Likes}}
+                                    <a href="/vote/comment?id={{.ID}}&vote=1" class="btn btn-default stat-item">
+                                        <i class="fa fa-thumbs-up icon"></i>{{.Votes.Likes}}
                                     </a>
-                                    <a href="javascript:void(0);" class="btn btn-default stat-item">
-                                        <i class="fa fa-thumbs-down icon"></i>{{.Post.Votes.Dislikes}}
+                                    <a href="/vote/comment?id={{.ID}}&vote=-1" class="btn btn-default stat-item">
+                                        <i class="fa fa-thumbs-down icon"></i>{{.Votes.Dislikes}}
                                     </a>
                                 </div>            
                             </div>
                         </li>
-                        <li class="comment">
+                        {{end}}
+                        <!-- <li class="comment">
                             <a class="pull-left" href="javascript:void(0);">
                                 <img class="avatar" src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
                             </a>
@@ -82,19 +91,7 @@
                                     </a>
                                 </div>            
                             </div>
-                        </li>
-                        <li class="comment">
-                            <a class="pull-left" href="javascript:void(0);">
-                                <img class="avatar" src="https://bootdey.com/img/Content/avatar/avatar4.png" alt="avatar">
-                            </a>
-                            <div class="comment-body">
-                                <div class="comment-heading">
-                                    <h4 class="user">John Doe</h4>
-                                    <h5 class="time">10 seconds ago</h5>
-                                </div>
-                                <p>Wow! This is gorgeous.</p>
-                            </div>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
             </div>

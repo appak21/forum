@@ -74,9 +74,9 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-//When returns time formatted like "5 seconds ago", "6 months ago".
-//Past time format must be based on RFC3339 or "2006-01-02 15:04:05".
-//If an error occurs, it returns past time itself without formatting
+//When formats and returns time like "5 seconds ago", "6 months ago",
+//past time format must be based on RFC3339 or "2006-01-02 15:04:05".
+//If an error occurs, it returns past time without formatting
 func When(past string) string {
 	now := time.Now().Format(time.RFC3339)
 	pastYear, err1 := strconv.Atoi(past[0:4])
