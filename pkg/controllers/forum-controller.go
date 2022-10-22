@@ -39,7 +39,7 @@ type AppHandler func(http.ResponseWriter, *http.Request) *appError
 func (fn AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println("RECOVER ERR:", err)
+			fmt.Println(err)
 			w.WriteHeader(500)
 			utils.Render(w, "error-page.html", appError{500, http.StatusText(500)})
 		}
